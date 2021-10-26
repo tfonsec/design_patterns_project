@@ -4,15 +4,15 @@ import com.gft.project.entities.Client;
 
 public interface ClientService {
 
-	Iterable<Client> buscarTodos();
+	Iterable<Client> findAll();
  
-	Client buscarPorId(Long id);
+	Client findById(Long id);
 
-	void inserir(Client client);
+	void insert(Client client);
 
-	void atualizar(Long id, Client client);
+	void update(Long id, Client client);
 
-	void deletar(Long id);
+	void delete(Long id);
 
 	
 	

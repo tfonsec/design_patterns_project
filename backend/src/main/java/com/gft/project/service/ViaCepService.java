@@ -13,7 +13,7 @@ public interface ViaCepService {
 
 	
 	@GetMapping("/{cep}/json/")
-	Address consultarCep(@PathVariable("cep") String cep);
+	Address searchforCep(@PathVariable("cep") String cep);
 	
 }
 

@@ -12,13 +12,6 @@ import com.gft.project.repository.ClientRepository;
 import com.gft.project.service.ClientService;
 import com.gft.project.service.ViaCepService;
 
-/**
- * Implementação da <b>Strategy</b> {@link ClienteService}, a qual pode ser
- * injetada pelo Spring (via {@link Autowired}). Com isso, como essa classe é um
- * {@link Service}, ela será tratada como um <b>Singleton</b>.
- * 
- * @author falvojr
- */
 @Service
 public class ClientServiceImp implements ClientService {
 
@@ -33,48 +26,48 @@ public class ClientServiceImp implements ClientService {
 	
 
 	@Override
-	public Iterable<Client> buscarTodos() {
+	public Iterable<Client> findAll() {
 			return clientRepository.findAll();
 	}
 
 	@Override
-	public Client buscarPorId(Long id) {
+	public Client findById(Long id) {
 		
-		Optional<Client> cliente = clientRepository.findById(id);
-		return cliente.get();
+		Optional<Client> client = clientRepository.findById(id);
+		return client.get();
 	}
 
 	@Override
-	public void inserir(Client client) {
-		salvarClienteComCep(client);
+	public void insert(Client client) {
+		saveClientAndCep(client);
 	}
 
 	@Override
-	public void atualizar(Long id, Client client) {
-		// Buscar Cliente por ID, caso exista:
-		Optional<Client> clienteBd = clientRepository.findById(id);
-		if (clienteBd.isPresent()) {
-			salvarClienteComCep(client);
+	public void update(Long id, Client client) {
+		
+		Optional<Client> clientBd = clientRepository.findById(id);
+		if (clientBd.isPresent()) {
+			saveClientAndCep(client);
 		}
 	}
 
 	@Override
-	public void deletar(Long id) {
-		// Deletar Cliente por ID.
+	public void delete(Long id) {
+		
 		clientRepository.deleteById(id);
 	}
 
-	private void salvarClienteComCep(Client client) {
-		// Verificar se o Endereco do Cliente já existe (pelo CEP).
+	private void saveClientAndCep(Client client) {
+		
 		String cep = client.getAddress().getCep();
-		Address endereco = addressRepository.findById(cep).orElseGet(() -> {
-			// Caso não exista, integrar com o ViaCEP e persistir o retorno.
-			Address novoEndereco = viaCepService.consultarCep(cep);
-			addressRepository.save(novoEndereco);
-			return novoEndereco;
+		Address address = addressRepository.findById(cep).orElseGet(() -> {
+			
+			Address newAddress = viaCepService.searchforCep(cep);
+			addressRepository.save(newAddress);
+			return newAddress;
 		});
-		client.setAddress(endereco);
-		// Inserir Cliente, vinculando o Endereco (novo ou existente).
+		client.setAddress(address);
+		
 		clientRepository.save(client);
 	}
 
